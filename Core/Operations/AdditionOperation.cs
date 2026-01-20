@@ -1,6 +1,6 @@
-using Calculator.Core.Interfaces;
+using Core.Interfaces;
 
-namespace Calculator.Core.Operations;
+namespace Core.Operations;
 
 /// <summary>
 /// Addition operation (Single Responsibility Principle)
