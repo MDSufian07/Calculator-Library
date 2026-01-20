@@ -1,4 +1,4 @@
-namespace Calculator.Core.Interfaces;
+namespace Core.Interfaces;
 
 /// <summary>
 /// Interface for the calculator service (Dependency Inversion Principle)
