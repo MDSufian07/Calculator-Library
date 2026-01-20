@@ -7,7 +7,7 @@ namespace Core.Operations;
 /// </summary>
 public class SinOperation : ICalculatorOperation
 {
-    public string OperatorType => "sin";
+    public string OperatorType => "Sin";
 
     public T Execute<T>(T[] operands)
     {
