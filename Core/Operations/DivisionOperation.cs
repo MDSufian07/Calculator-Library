@@ -1,6 +1,6 @@
-using Calculator.Core.Interfaces;
+using Core.Interfaces;
 
-namespace Calculator.Core.Operations;
+namespace Core.Operations;
 
 /// <summary>
 /// Division operation with validation (Single Responsibility Principle)
