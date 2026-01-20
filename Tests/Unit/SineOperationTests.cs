@@ -20,7 +20,7 @@ public class SineOperationTests : CalculatorOperationTestsBase
     [Test]
     public override void OperatorType_ReturnsCorrectType()
     {
-        Assert.That(Operation!.OperatorType, Is.EqualTo("sin"));
+        Assert.That(Operation!.OperatorType, Is.EqualTo("Sin"));
     }
 
     [TestCaseSource(typeof(ArithmeticTestData), nameof(ArithmeticTestData.SineTestCases))]
