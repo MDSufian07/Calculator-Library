@@ -4,7 +4,13 @@ namespace Calculator.Tests.Fixtures;
 
 /// <summary>
 /// Comprehensive test data for all calculator operations
-/// Provides exhaustive test cases to identify missing functionality
+/// Provides exhaustive test cases including:
+/// - Basic arithmetic (positive, negative, mixed signs)
+/// - Boundary conditions (zero, large numbers, min/max values)
+/// - Mathematical properties (commutative, identity, zero property)
+/// - Floating-point edge cases (very small, very large, precision)
+/// - Special angles for trigonometric functions
+/// - Error/exception scenarios
 /// </summary>
 public static class ArithmeticTestData
 {
@@ -13,7 +19,7 @@ public static class ArithmeticTestData
     #region Addition Test Cases
 
     /// <summary>
-    /// Addition test cases covering: positive, negative, mixed, zero, large numbers, edge cases
+    /// Addition test cases covering: positive, negative, mixed, zero, large numbers, overflow edge cases
     /// </summary>
     public static IEnumerable<TestCaseData> AdditionTestCases()
     {
@@ -38,16 +44,31 @@ public static class ArithmeticTestData
         // Commutative property verification
         yield return new TestCaseData(new int[] { 7, 3 }, 10).SetName("Addition_Commutative_7_Plus_3");
         yield return new TestCaseData(new int[] { 3, 7 }, 10).SetName("Addition_Commutative_3_Plus_7");
+
+        // Boundary: Very large numbers (potential overflow)
+        yield return new TestCaseData(new int[] { int.MaxValue - 10, 5 }, int.MaxValue - 5).SetName("Addition_NearMaxValue_MaxValue_Minus10_Plus_5");
+        yield return new TestCaseData(new int[] { int.MinValue + 10, -5 }, int.MinValue + 5).SetName("Addition_NearMinValue_MinValue_Plus10_Minus_5");
     }
 
     /// <summary>
-    /// Addition double precision test cases
+    /// Addition double precision test cases including very small and very large numbers
     /// </summary>
     public static IEnumerable<TestCaseData> AdditionDoubleTestCases()
     {
         yield return new TestCaseData(new double[] { 2.5, 3.7 }, 6.2).SetName("Addition_Double_2.5_Plus_3.7");
         yield return new TestCaseData(new double[] { -2.5, -3.7 }, -6.2).SetName("Addition_Double_Negative");
         yield return new TestCaseData(new double[] { 0.1, 0.2 }, 0.3).SetName("Addition_Double_Precision_0.1_Plus_0.2");
+
+        // Very small numbers
+        yield return new TestCaseData(new double[] { 1e-10, 1e-10 }, 2e-10).SetName("Addition_Double_VerySmall_1e-10_Plus_1e-10");
+
+        // Very large numbers
+        yield return new TestCaseData(new double[] { 1e10, 1e10 }, 2e10).SetName("Addition_Double_VeryLarge_1e10_Plus_1e10");
+
+        // Infinity cases
+        yield return new TestCaseData(new double[] { double.PositiveInfinity, 5 }, double.PositiveInfinity).SetName("Addition_Double_Infinity_Plus_5");
+        yield return new TestCaseData(new double[] { double.NegativeInfinity, 5 }, double.NegativeInfinity).SetName("Addition_Double_NegInfinity_Plus_5");
+        yield return new TestCaseData(new double[] { double.PositiveInfinity, double.NegativeInfinity }, double.NaN).SetName("Addition_Double_Infinity_Plus_NegInfinity");
     }
 
     #endregion
@@ -188,13 +209,24 @@ public static class ArithmeticTestData
     }
 
     /// <summary>
-    /// Division double precision test cases
+    /// Division double precision test cases including edge cases and special values
     /// </summary>
     public static IEnumerable<TestCaseData> DivisionDoubleTestCases()
     {
         yield return new TestCaseData(new double[] { 7.5, 2.5 }, 3.0).SetName("Division_Double_7.5_Divided_2.5");
         yield return new TestCaseData(new double[] { -7.5, 2.5 }, -3.0).SetName("Division_Double_Negative_Neg7.5_Divided_2.5");
         yield return new TestCaseData(new double[] { 1.0, 2.0 }, 0.5).SetName("Division_Double_1.0_Divided_2.0");
+
+        // Very small divisor (precision test)
+        yield return new TestCaseData(new double[] { 1.0, 1e-10 }, 1e10).SetName("Division_Double_VerySmallDivisor_1.0_Divided_1e-10");
+
+        // Very large numbers
+        yield return new TestCaseData(new double[] { 1e10, 1e5 }, 1e5).SetName("Division_Double_VeryLarge_1e10_Divided_1e5");
+
+        // Infinity cases
+        yield return new TestCaseData(new double[] { double.PositiveInfinity, 5 }, double.PositiveInfinity).SetName("Division_Double_Infinity_Divided_5");
+        yield return new TestCaseData(new double[] { 5, double.PositiveInfinity }, 0.0).SetName("Division_Double_5_Divided_Infinity");
+        yield return new TestCaseData(new double[] { 0, double.PositiveInfinity }, 0.0).SetName("Division_Double_0_Divided_Infinity");
     }
 
     #endregion
@@ -204,7 +236,7 @@ public static class ArithmeticTestData
     #region Sine Test Cases
 
     /// <summary>
-    /// Sine function test cases covering: 0, pi/2, pi, 3pi/2, 2pi, negative angles, common angles
+    /// Sine function test cases covering: special angles, large angles, small angles, negative angles, edge cases
     /// All angles in radians
     /// </summary>
     public static IEnumerable<TestCaseData> SineTestCases()
@@ -227,6 +259,19 @@ public static class ArithmeticTestData
 
         // Decimal values
         yield return new TestCaseData(new double[] { 0.5 }, Math.Sin(0.5)).SetName("Sin_Decimal_sin(0.5)");
+
+        // Large angles (periodicity test: sin(x) = sin(x + 2π))
+        yield return new TestCaseData(new double[] { 4 * Math.PI }, 0.0).SetName("Sin_Large_4Pi_sin(4pi)");
+        yield return new TestCaseData(new double[] { 10 * Math.PI }, 0.0).SetName("Sin_VeryLarge_10Pi_sin(10pi)");
+
+        // Very small angles (near zero, sin(x) ≈ x for small x)
+        yield return new TestCaseData(new double[] { 0.001 }, Math.Sin(0.001)).SetName("Sin_VerySmall_sin(0.001)");
+        yield return new TestCaseData(new double[] { 1e-10 }, Math.Sin(1e-10)).SetName("Sin_TinyAngle_sin(1e-10)");
+
+        // Edge cases: Infinity and NaN
+        yield return new TestCaseData(new double[] { double.PositiveInfinity }, double.NaN).SetName("Sin_Infinity_sin(+Inf)");
+        yield return new TestCaseData(new double[] { double.NegativeInfinity }, double.NaN).SetName("Sin_NegInfinity_sin(-Inf)");
+        yield return new TestCaseData(new double[] { double.NaN }, double.NaN).SetName("Sin_NaN_sin(NaN)");
     }
 
     #endregion
@@ -234,7 +279,7 @@ public static class ArithmeticTestData
     #region Cosine Test Cases
 
     /// <summary>
-    /// Cosine function test cases covering: 0, pi/2, pi, 3pi/2, 2pi, negative angles, common angles
+    /// Cosine function test cases covering: special angles, large angles, small angles, negative angles, edge cases
     /// All angles in radians
     /// </summary>
     public static IEnumerable<TestCaseData> CosineTestCases()
@@ -257,6 +302,19 @@ public static class ArithmeticTestData
 
         // Decimal values
         yield return new TestCaseData(new double[] { 0.5 }, Math.Cos(0.5)).SetName("Cos_Decimal_cos(0.5)");
+
+        // Large angles (periodicity test: cos(x) = cos(x + 2π))
+        yield return new TestCaseData(new double[] { 4 * Math.PI }, 1.0).SetName("Cos_Large_4Pi_cos(4pi)");
+        yield return new TestCaseData(new double[] { 10 * Math.PI }, 1.0).SetName("Cos_VeryLarge_10Pi_cos(10pi)");
+
+        // Very small angles (near zero, cos(x) ≈ 1 for small x)
+        yield return new TestCaseData(new double[] { 0.001 }, Math.Cos(0.001)).SetName("Cos_VerySmall_cos(0.001)");
+        yield return new TestCaseData(new double[] { 1e-10 }, Math.Cos(1e-10)).SetName("Cos_TinyAngle_cos(1e-10)");
+
+        // Edge cases: Infinity and NaN
+        yield return new TestCaseData(new double[] { double.PositiveInfinity }, double.NaN).SetName("Cos_Infinity_cos(+Inf)");
+        yield return new TestCaseData(new double[] { double.NegativeInfinity }, double.NaN).SetName("Cos_NegInfinity_cos(-Inf)");
+        yield return new TestCaseData(new double[] { double.NaN }, double.NaN).SetName("Cos_NaN_cos(NaN)");
     }
 
     #endregion
@@ -264,8 +322,8 @@ public static class ArithmeticTestData
     #region Tangent Test Cases
 
     /// <summary>
-    /// Tangent function test cases covering: 0, special angles, common angles
-    /// Note: Tan is undefined at pi/2, 3pi/2, etc. - these tests will produce very large values due to floating point
+    /// Tangent function test cases covering: special angles, large angles, small angles, undefined points, edge cases
+    /// Note: Tan is undefined at pi/2, 3pi/2, etc. - these produce very large values in floating point
     /// All angles in radians
     /// </summary>
     public static IEnumerable<TestCaseData> TangentTestCases()
@@ -288,8 +346,117 @@ public static class ArithmeticTestData
         yield return new TestCaseData(new double[] { 0.5 }, Math.Tan(0.5)).SetName("Tan_Decimal_tan(0.5)");
         yield return new TestCaseData(new double[] { 1.0 }, Math.Tan(1.0)).SetName("Tan_One_tan(1)");
 
+        // Large angles (periodicity test: tan(x) = tan(x + π))
+        yield return new TestCaseData(new double[] { 4 * Math.PI }, 0.0).SetName("Tan_Large_4Pi_tan(4pi)");
+
+        // Very small angles (near zero, tan(x) ≈ x for small x)
+        yield return new TestCaseData(new double[] { 0.001 }, Math.Tan(0.001)).SetName("Tan_VerySmall_tan(0.001)");
+        yield return new TestCaseData(new double[] { 1e-10 }, Math.Tan(1e-10)).SetName("Tan_TinyAngle_tan(1e-10)");
+
+        // Edge cases: Infinity and NaN
+        yield return new TestCaseData(new double[] { double.PositiveInfinity }, double.NaN).SetName("Tan_Infinity_tan(+Inf)");
+        yield return new TestCaseData(new double[] { double.NegativeInfinity }, double.NaN).SetName("Tan_NegInfinity_tan(-Inf)");
+        yield return new TestCaseData(new double[] { double.NaN }, double.NaN).SetName("Tan_NaN_tan(NaN)");
+
         // Note: Tests near undefined points (pi/2, 3pi/2) will result in very large positive/negative values
         // due to floating point precision - this is expected behavior for tangent function
+    }
+
+    #endregion
+
+    // ==================== EDGE CASE & OVERFLOW TEST CASES ====================
+
+    #region Integer Overflow Edge Cases
+
+    /// <summary>
+    /// Test multiplication with large integers that could cause overflow
+    /// </summary>
+    public static IEnumerable<TestCaseData> MultiplicationOverflowTestCases()
+    {
+        // Near maximum value boundaries
+        yield return new TestCaseData(new int[] { int.MaxValue - 1, 1 }, int.MaxValue - 1).SetName("Mul_Overflow_MaxValue_Minus1_Times_1");
+        yield return new TestCaseData(new int[] { int.MinValue + 1, 1 }, int.MinValue + 1).SetName("Mul_Overflow_MinValue_Plus1_Times_1");
+
+        // Large number multiplication that would overflow
+        yield return new TestCaseData(new int[] { 100000, 100000 }, 10000000000).SetName("Mul_Overflow_100000_Times_100000");
+    }
+
+    #endregion
+
+    #region Floating Point Edge Cases
+
+    /// <summary>
+    /// Test floating point operations with very small, very large, and special values (NaN, Infinity)
+    /// </summary>
+    public static IEnumerable<TestCaseData> FloatingPointEdgeCaseTestCases()
+    {
+        // Extremely small numbers
+        yield return new TestCaseData(new double[] { double.Epsilon, 1.0 }, double.Epsilon).SetName("FloatEdge_Epsilon_Plus_1");
+        yield return new TestCaseData(new double[] { 1e-300, 1e-300 }, 2e-300).SetName("FloatEdge_1e-300_Plus_1e-300");
+
+        // Extremely large numbers
+        yield return new TestCaseData(new double[] { double.MaxValue / 2, 1.0 }, double.MaxValue / 2).SetName("FloatEdge_MaxValue_Div2_Plus_1");
+
+        // Subnormal numbers (near zero)
+        yield return new TestCaseData(new double[] { 5e-324, 5e-324 }, double.Epsilon).SetName("FloatEdge_Subnormal_Plus_Subnormal");
+
+        // Negative zero
+        yield return new TestCaseData(new double[] { -0.0, 0.0 }, 0.0).SetName("FloatEdge_NegZero_Plus_PosZero");
+    }
+
+    /// <summary>
+    /// Test double precision arithmetic with mixed magnitude values
+    /// </summary>
+    public static IEnumerable<TestCaseData> MixedMagnitudeTestCases()
+    {
+        // Adding very large and very small numbers (precision loss)
+        yield return new TestCaseData(new double[] { 1e20, 1e-20 }, 1e20).SetName("FloatEdge_LargeAndSmall_1e20_Plus_1e-20");
+
+        // Multiplication with very small numbers
+        yield return new TestCaseData(new double[] { 1e-100, 1e-100 }, 1e-200).SetName("FloatEdge_VerySmallMul_1e-100_Times_1e-100");
+
+        // Division with very small denominator
+        yield return new TestCaseData(new double[] { 1.0, 1e-100 }, 1e100).SetName("FloatEdge_SmallDenominator_1_Divided_1e-100");
+    }
+
+    #endregion
+
+    #region Subtraction Edge Cases
+
+    /// <summary>
+    /// Subtraction test cases with edge conditions
+    /// </summary>
+    public static IEnumerable<TestCaseData> SubtractionEdgeCaseTestCases()
+    {
+        // Large positive minus large positive (could underflow to negative)
+        yield return new TestCaseData(new int[] { 1000, 2000 }, -1000).SetName("Sub_Edge_1000_Minus_2000");
+
+        // Negative minus negative (can become positive)
+        yield return new TestCaseData(new int[] { -1000, -2000 }, 1000).SetName("Sub_Edge_Neg1000_Minus_Neg2000");
+
+        // Very small differences
+        yield return new TestCaseData(new double[] { 1.0000001, 1.0 }, 0.0000001).SetName("Sub_Edge_Double_VerySmallDifference");
+    }
+
+    #endregion
+
+    #region Trigonometric Boundary Cases
+
+    /// <summary>
+    /// Test trigonometric functions at boundaries and special values
+    /// </summary>
+    public static IEnumerable<TestCaseData> TrigonometricBoundaryTestCases()
+    {
+        // Values very close to undefined points for tangent
+        double almostPiHalf = Math.PI / 2 - 0.0001;
+        yield return new TestCaseData(new double[] { almostPiHalf }, Math.Tan(almostPiHalf)).SetName("Trig_TanNearUndefined_AlmostPiHalf");
+
+        // Values at exact multiples of 2π (should cycle back to original)
+        yield return new TestCaseData(new double[] { 100 * Math.PI }, Math.Sin(100 * Math.PI)).SetName("Trig_SinLargeMultiple_100Pi");
+        yield return new TestCaseData(new double[] { 100 * Math.PI }, Math.Cos(100 * Math.PI)).SetName("Trig_CosLargeMultiple_100Pi");
+
+        // Negative very large angles
+        yield return new TestCaseData(new double[] { -1000 * Math.PI }, Math.Sin(-1000 * Math.PI)).SetName("Trig_SinNegLargeAngle_Neg1000Pi");
     }
 
     #endregion
