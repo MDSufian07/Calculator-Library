@@ -1,7 +1,7 @@
 namespace Models.Vectors;
 
 using System;
-using Calculator.Core.Operations;
+using Core.Operations;
 
 /// <summary>
 /// Represents a 2D vector with common vector operations.
