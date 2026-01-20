@@ -1,4 +1,4 @@
-namespace CalculatorApp.Console.Vectors;
+namespace Models.Vectors;
 
 /// <summary>
 /// Extended interface for 2D vector operations.

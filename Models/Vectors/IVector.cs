@@ -1,4 +1,4 @@
-namespace CalculatorApp.Console.Vectors;
+namespace Models.Vectors;
 
 /// <summary>
 /// Base interface for vector operations implementing DRY principle.
